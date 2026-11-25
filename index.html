@@ -239,23 +239,6 @@ data.pop();
 alert("저장 공간이 부족합니다. 사진 용량을 줄여주세요.");
 }
 };
-e.preventDefault();
-data.push({
-title:title.value,
-type:type.value,
-location:location.value,
-price:Number(price.value),
-deal:deal.value,
-want:want.value,
-phone:phone.value,
-desc:desc.value
-});
-save();
-this.reset();
-alert("매물이 등록되었습니다!");
-page("home");
-};
-
 function search(){
 let k=keyword.value.toLowerCase();
 let t=kind.value;

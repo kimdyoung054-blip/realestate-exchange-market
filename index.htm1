@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>전국부동산 교환마켓</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#24334a}
+header{background:#124b91;color:white;padding:25px 18px}
+header h2{margin:0;font-size:23px}
+header p{margin-bottom:0}
+nav{display:flex;background:white;position:sticky;top:0}
+nav button{flex:1;padding:14px 2px;border:0;background:white;font-weight:bold;font-size:12px}
+nav button.on{color:#1263c5;border-bottom:3px solid #1263c5}
+main{padding:15px;max-width:750px;margin:auto}
+.page{display:none}
+.page.on{display:block}
+.hero{background:linear-gradient(130deg,#124b91,#398ce0);color:white;padding:24px;border-radius:15px;margin-bottom:15px}
+.box,.card{background:white;padding:16px;border-radius:12px;margin-bottom:13px}
+h3{margin-top:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.cat{background:#edf4ff;padding:17px 5px;text-align:center;border-radius:10px;font-weight:bold}
+input,select,textarea{width:100%;padding:13px;margin:7px 0 14px;border:1px solid #ccd6e3;border-radius:8px;font-size:15px}
+label{font-size:13px;font-weight:bold}
+.primary{width:100%;padding:14px;background:#1263c5;color:white;border:0;border-radius:9px;font-size:16px;font-weight:bold}
+.tag{background:#e5f0ff;color:#1759a0;padding:5px 9px;border-radius:20px;font-size:12px}
+.price{font-size:22px;color:#1759a0;font-weight:bold;margin:12px 0}
+.small{font-size:12px;color:#778397}
+.match{background:#eaf4ff;padding:15px;border-radius:10px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🏢 전국부동산 교환마켓</h2>
+<p>사고 · 팔고 · 바꾸고!</p>
+<p>전국 부동산을 한곳에서</p>
+</header>
+
+<nav>
+<button class="on" onclick="page('home',this)">홈</button>
+<button onclick="page('search',this)">매물검색</button>
+<button onclick="page('add',this)">매물등록</button>
+<button onclick="page('match',this)">교환매칭</button>
+</nav>
+
+<main>
+
+<section id="home" class="page on">
+<div class="hero">
+<h2>내 부동산의 새로운 가치!</h2>
+<p>전국 부동산을 사고 팔고 교환하세요.</p>
+<button class="primary" onclick="page('add')">내 매물 등록하기</button>
+</div>
+
+<div class="box">
+<h3>부동산 종류</h3>
+<div class="grid">
+<div class="cat">🏠 아파트·주택</div>
+<div class="cat">🏘 빌라</div>
+<div class="cat">🏢 빌딩·상가</div>
+<div class="cat">🏬 오피스텔</div>
+<div class="cat">🏨 호텔·모텔</div>
+<div class="cat">🏡 펜션·리조트</div>
+<div class="cat">🏭 공장·창고</div>
+<div class="cat">🌳 토지·임야</div>
+</div>
+</div>
+<div class="box">
+<h3>최근 등록 매물</h3>
+<div id="homeList"></div>
+</div>
+</section>
+
+<section id="search" class="page">
+<div class="box">
+<h3>전국 매물 검색</h3>
+<input id="keyword" placeholder="지역 또는 매물 이름">
+<select id="kind">
+<option value="">전체 부동산</option>
+<option>아파트</option><option>빌라</option>
+<option>빌딩</option><option>상가</option>
+<option>오피스텔</option><option>호텔</option>
+<option>모텔</option><option>펜션</option>
+<option>공장</option><option>창고</option>
+<option>토지</option>
+</select>
+<button class="primary" onclick="search()">검색하기</button>
+</div>
+<div id="results"></div>
+</section>
+
+<section id="add" class="page">
+<div class="box">
+<h3>내 부동산 등록</h3>
+<form id="form">
+<label>매물 이름</label>
+<input id="title" required placeholder="예: 강남 수익형 빌딩">
+
+<label>부동산 종류</label>
+<select id="type">
+<option>아파트</option><option>빌라</option>
+<option>주택</option><option>오피스텔</option>
+<option>상가</option><option>빌딩</option>
+<option>호텔</option><option>모텔</option>
+<option>펜션</option><option>공장</option>
+<option>창고</option><option>토지</option>
+</select>
+
+<label>주소 및 지역</label>
+<input id="location" required placeholder="예: 서울 강남구">
+
+<label>희망 가격 (억원)</label>
+<input id="price" type="number" step="0.1" required placeholder="예: 30">
+
+<label>거래 방법</label>
+<select id="deal">
+<option>매매</option><option>교환</option><option>매매·교환 모두</option>
+</select>
+
+<label>교환 희망 부동산</label>
+<input id="want" placeholder="예: 빌딩, 토지, 펜션">
+
+<label>연락처</label>
+<input id="phone" placeholder="전화번호">
+
+<label>매물 설명</label>
+<textarea id="desc" placeholder="면적, 임대수익, 건물 정보 등"></textarea>
+
+<button class="primary">매물 등록하기</button>
+</form>
+</div>
+</section>
+
+<section id="match" class="page">
+<div class="box">
+<h3>🔄 교환 매물 자동 찾기</h3>
+<p>서로 원하는 부동산 종류와 가격을 비교합니다.</p>
+<button class="primary" onclick="matching()">교환 매칭 시작</button>
+</div>
+<div id="matches"></div>
+</section>
+
+</main>
+
+<script>
+let data=JSON.parse(localStorage.getItem("estateData")||"[]");
+
+function save(){
+localStorage.setItem("estateData",JSON.stringify(data));
+}
+
+function page(id,btn){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("on"));
+document.getElementById(id).classList.add("on");
+document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+if(btn)btn.classList.add("on");
+render();
+}
+
+function card(p){
+return `<div class="card">
+<span class="tag">${p.type}</span>
+<span class="tag">${p.deal}</span>
+<h3>${p.title}</h3>
+<p>📍 ${p.location}</p>
+<div class="price">${p.price}억원</div>
+<p>교환 희망: ${p.want||"없음"}</p>
+<p>${p.desc||""}</p>
+<p class="small">연락처: ${p.phone||"상담 시 공개"}</p>
+</div>`;
+}
+
+function render(){
+document.getElementById("homeList").innerHTML=
+data.slice(-5).reverse().map(card).join("")||"등록된 매물이 없습니다.";
+}
+
+document.getElementById("form").onsubmit=function(e){
+e.preventDefault();
+data.push({
+title:title.value,
+type:type.value,
+location:location.value,
+price:Number(price.value),
+deal:deal.value,
+want:want.value,
+phone:phone.value,
+desc:desc.value
+});
+save();
+this.reset();
+alert("매물이 등록되었습니다!");
+page("home");
+};
+
+function search(){
+let k=keyword.value.toLowerCase();
+let t=kind.value;
+let found=data.filter(p=>
+(p.title+p.location).toLowerCase().includes(k)&&
+(!t||p.type===t));
+document.getElementById("results").innerHTML=
+found.map(card).join("")||"검색 결과가 없습니다.";
+}
+
+function matching(){
+let out="";
+for(let i=0;i<data.length;i++){
+for(let j=i+1;j<data.length;j++){
+let a=data[i],b=data[j];
+if(a.deal==="매매"||b.deal==="매매")continue;
+let ok=a.want.includes(b.type)&&b.want.includes(a.type);
+if(ok){
+out+=`<div class="match">
+<h3>🎯 교환 매칭 발견</h3>
+<p>${a.title} ↔ ${b.title}</p>
+<p>가격 차액: ${Math.abs(a.price-b.price)}억원</p>
+<p>${a.location} ↔ ${b.location}</p>
+</div>`;
+}
+}
+}
+document.getElementById("matches").innerHTML=
+out||"현재 조건이 맞는 매물이 없습니다.";
+}
+
+render();
+</script>
+</body>
+</html>

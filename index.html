@@ -178,7 +178,67 @@ document.getElementById("homeList").innerHTML=
 data.slice(-5).reverse().map(card).join("")||"등록된 매물이 없습니다.";
 }
 
-document.getElementById("form").onsubmit=function(e){
+document.getElementById("form").onsubmit=async function(e){
+e.preventDefault();
+
+let files=document.getElementById("photos").files;
+
+if(files.length>3){
+alert("사진은 최대 3장까지 등록 가능합니다.");
+return;
+}
+
+let photos=await Promise.all(
+Array.from(files).map(file=>new Promise(resolve=>{
+let reader=new FileReader();
+
+reader.onload=function(ev){
+let img=new Image();
+
+img.onload=function(){
+let canvas=document.createElement("canvas");
+let scale=Math.min(1,1200/Math.max(img.width,img.height));
+
+canvas.width=img.width*scale;
+canvas.height=img.height*scale;
+
+let ctx=canvas.getContext("2d");
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+resolve(canvas.toDataURL("image/jpeg",0.7));
+};
+
+img.onerror=()=>resolve("");
+img.src=ev.target.result;
+};
+
+reader.onerror=()=>resolve("");
+reader.readAsDataURL(file);
+}))
+);
+
+data.push({
+title:document.getElementById("title").value,
+type:document.getElementById("type").value,
+location:document.getElementById("location").value,
+price:Number(document.getElementById("price").value),
+deal:document.getElementById("deal").value,
+want:document.getElementById("want").value,
+phone:document.getElementById("phone").value,
+desc:document.getElementById("desc").value,
+photos:photos.filter(Boolean)
+});
+
+try{
+save();
+this.reset();
+alert("사진과 매물이 등록되었습니다!");
+page("home");
+}catch(err){
+data.pop();
+alert("저장 공간이 부족합니다. 사진 용량을 줄여주세요.");
+}
+};
 e.preventDefault();
 data.push({
 title:title.value,
